@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.svm import SVR
 from sklearn.gaussian_process.kernels import ExpSineSquared
-from true_funcs import polyn, peri, comb
+from true_funcs import polyn, peri, comb, rkhs
 import matplotlib.pyplot as plt
 import params
 
@@ -14,6 +14,35 @@ def sample_funcs(num=10):
     y_peri_sample = peri(X_sample)
     y_comb_sample = comb(X_sample)
     return X_sample, y_poly_sample, y_peri_sample, y_comb_sample
+
+
+def sample_rkhs_func(num=10, noise=0):
+    np.random.seed(5)
+    X_sample = (np.random.uniform(0, 8, num)).reshape((-1, 1))
+    y_sample = rkhs(X_sample)
+    for sample in y_sample:
+        sample += np.random.uniform(-noise, noise)
+    return X_sample, y_sample
+
+
+def plot_rkhs_func(samples=True):
+    X = np.linspace(0, 8, 1000).reshape((-1, 1))
+    y = rkhs(X)
+    if samples:
+        X_samples, y_samples = sample_rkhs_func()
+        plot_dat(
+            X,
+            y,
+            "rkhs_true",
+            X_samples,  # [:8]
+            y_samples,  # [:8]
+            y_min=-1.5,
+            y_max=4.5,
+            x_min=0,
+            x_max=8,
+        )
+    else:
+        plot_dat(X, y, "rkhs_true", y_min=-1.5, y_max=4.5, x_min=0, x_max=8)
 
 
 def plot_true_funcs():
@@ -94,7 +123,16 @@ def approx_funcs():
 
 
 def plot_dat(
-    X, y, name, X_samples=None, y_samples=None, _type=".png", y_min=0, y_max=1
+    X,
+    y,
+    name,
+    X_samples=None,
+    y_samples=None,
+    _type=".png",
+    y_min=0,
+    y_max=1,
+    x_min=0,
+    x_max=5,
 ):
     font_size = 10
     fig = plt.figure()
@@ -108,7 +146,7 @@ def plot_dat(
     plt.plot(X, y, color=params.colors["red"], lw=2)
     if X_samples is not None:
         plt.plot(X_samples, y_samples, "o", color=params.colors["grey"], ms=8)
-    plt.xlim(0, 5)
+    plt.xlim(x_min, x_max)
     plt.ylim(y_min, y_max)
     fig.tight_layout()
     plt.show()
@@ -116,5 +154,6 @@ def plot_dat(
 
 
 if __name__ == "__main__":
-    plot_true_funcs()
-    approx_funcs()
+    plot_rkhs_func()
+    # plot_true_funcs()
+    # approx_funcs()
