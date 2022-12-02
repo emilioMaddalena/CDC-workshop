@@ -20,6 +20,7 @@ def comb(x):
 def rkhs(x, lengthscale=1):
     X = np.array([[0], [1], [3], [4], [5], [7]])
     y = np.array([[0], [2], [-1], [1], [-0.5], [4]])
-    funct = KRR(1e-8, lengthscale, 0, 5)
+    funct = KRR(1e-8, lengthscale, 0, 6.4)
     funct.fit(X, y)
+    print(f"Norm: {funct.get_norm()}")
     return funct.predict(x)

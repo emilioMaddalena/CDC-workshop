@@ -73,6 +73,7 @@ class OptiBound(BaseModel):
         ]
         prob = cp.Problem(cost, constraints)
         prob.solve()
+        self.interp_val = c.value[:-1]
         return prob.value
 
     def get_bound_v2(self, X, btype):
@@ -96,10 +97,10 @@ class OptiBound(BaseModel):
         return prob.value
 
     def get_lower_bound(self, X):
-        return self.get_bound(X, "min").flatten()
+        return self.get_bound(X, "min")  # .flatten()
 
     def get_upper_bound(self, X):
-        return self.get_bound(X, "max").flatten()
+        return self.get_bound(X, "max")  # .flatten()
 
 
 class KRR(BaseModel):
@@ -162,6 +163,11 @@ class KRR(BaseModel):
         assert self.interp_dual_coef_ is not None
         return np.sqrt(np.dot(self.y.T, self.interp_dual_coef_)).flatten()
 
-
     def get_interp_bound(self, X):
         return self.power(X) * np.sqrt(self.Gamma**2 - self.get_norm() ** 2)
+
+    def get_interp_lower(self, X):
+        return self.predict(X).flatten() - self.get_interp_bound(X).flatten()
+
+    def get_interp_upper(self, X):
+        return self.predict(X).flatten() + self.get_interp_bound(X).flatten()

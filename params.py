@@ -1,7 +1,8 @@
 colors = {"red": "#B51F1F",
           "dark-blue": "#435369",
           "blue": "#ACB9C9",
-          "grey": "#484848"}
+          "grey": "#484848",
+          "green": "#10B44E"}
 
 fig_params = {'figure.figsize' : (5, 3),
               'text.usetex' : True,
